@@ -76,7 +76,8 @@
         }
 
         .ticker {
-            font-size: 1.5em;
+            font-size: 2em;
+            color: var(--accent);
             margin-bottom: 20px;
         }
     </style>
@@ -92,7 +93,7 @@
             }
         }
 
-        setInterval(updateBitcoinPrice, 60000); // Update every minute
+        setInterval(updateBitcoinPrice, 10000); // Update every 10 seconds
         window.onload = updateBitcoinPrice;
     </script>
 </head>
