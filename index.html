@@ -20,10 +20,9 @@
             --max-width-container: 1200px;
         }
 
-        * {
+        /* Universal Box Sizing */
+        *, *::before, *::after {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
@@ -32,22 +31,26 @@
             font-family: var(--font-primary);
             display: flex;
             flex-direction: column;
+            align-items: center; /* Centers container horizontally */
+            justify-content: center; /* Centers container vertically */
             min-height: 100vh;
             text-align: center;
             padding: 20px;
+            margin: 0;
         }
 
         .container {
             width: 100%;
             max-width: var(--max-width-container);
-            margin: 0 auto;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: center; /* Centers children horizontally */
+            /* border: 2px solid red; */ /* Uncomment for debugging */
         }
 
         header {
             margin-bottom: 30px;
+            width: 100%;
         }
 
         h1 {
@@ -61,6 +64,8 @@
             font-size: 1.3em;
             color: var(--text-secondary);
             margin-bottom: 40px;
+            width: 100%;
+            max-width: 600px;
         }
 
         .bitcoin-tracker {
@@ -68,14 +73,15 @@
             padding: 30px 20px;
             border-radius: 10px;
             margin-bottom: 40px;
-            position: relative;
             width: 100%;
             max-width: 600px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
             animation: fadeIn 1s ease-in-out;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: center; /* Centers internal elements horizontally */
+            margin: 0 auto; /* Ensures the tracker itself is centered */
+            /* border: 2px solid blue; */ /* Uncomment for debugging */
         }
 
         .bitcoin-tracker h2 {
@@ -119,6 +125,7 @@
             gap: 15px;
             max-width: 800px;
             margin: 0 auto;
+            width: 100%;
         }
 
         .report-links a {
@@ -207,6 +214,9 @@
             padding: 20px 0;
             font-size: 0.9em;
             color: var(--text-secondary);
+            width: 100%;
+            max-width: var(--max-width-container);
+            text-align: center;
         }
     </style>
     <script>
