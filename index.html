@@ -2,110 +2,282 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOASS Reports</title>
+    <meta name="description" content="Explore the latest due diligence reports on MOASS, including SVMH, UAVS, SIRI, and GME. Stay updated with real-time Bitcoin prices.">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         :root {
-            --bg-primary: #111;
-            --text-primary: #fff;
-            --text-secondary: rgba(255, 255, 255, 0.7);
-            --accent: #005288;
-            --accent-hover: #3474b5;
+            --bg-primary: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --accent: #f7931a; /* Bitcoin Orange */
+            --accent-hover: #ff8c42;
+            --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --progress-bg: #333333;
+            --progress-fill: #f7931a;
+            --button-hover-scale: 1.05;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             background: var(--bg-primary);
             color: var(--text-primary);
-            font-family: Arial, sans-serif;
-            margin: 0;
+            font-family: var(--font-primary);
             display: flex;
-            flex-direction: column; /* Changed to column to accommodate more buttons */
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             min-height: 100vh;
             text-align: center;
             padding: 20px;
         }
 
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
+        header {
+            margin-bottom: 30px;
         }
 
-        p {
-            font-size: 1.2em;
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: var(--accent);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        p.tagline {
+            font-size: 1.3em;
             color: var(--text-secondary);
             margin-bottom: 40px;
         }
 
+        .bitcoin-tracker {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .bitcoin-tracker h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .bitcoin-price {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            background-color: var(--progress-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            height: 25px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--progress-fill);
+            transition: width 1s ease-in-out;
+        }
+
+        .goal-text {
+            font-size: 1em;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
         .report-links {
             display: flex;
-            flex-wrap: wrap; /* Allows buttons to wrap to the next line if needed */
+            flex-wrap: wrap;
             justify-content: center;
+            gap: 15px;
             max-width: 800px;
+            margin: 0 auto;
         }
 
         .report-links a {
-            display: inline-block;
-            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
             background-color: var(--accent);
             color: #fff;
             text-decoration: none;
-            font-size: 1.2em;
-            margin: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            white-space: nowrap; /* Prevents text from wrapping within buttons */
+            font-size: 1.1em;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            min-width: 160px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
-        .report-links a:hover {
+        .report-links a:hover,
+        .report-links a:focus {
             background-color: var(--accent-hover);
+            transform: scale(var(--button-hover-scale));
+            outline: none;
         }
 
         /* Responsive Design */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             h1 {
-                font-size: 2em;
+                font-size: 2.5em;
             }
-            p {
-                font-size: 1em;
+            p.tagline {
+                font-size: 1.1em;
+            }
+            .bitcoin-tracker {
+                padding: 15px;
+            }
+            .bitcoin-tracker h2 {
+                font-size: 1.8em;
+            }
+            .bitcoin-price {
+                font-size: 2em;
             }
             .report-links a {
                 font-size: 1em;
-                padding: 8px 16px;
+                padding: 12px 24px;
+                min-width: 140px;
             }
         }
 
-        .ticker {
-            font-size: 2em;
-            color: var(--accent);
-            margin-bottom: 20px;
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+            p.tagline {
+                font-size: 1em;
+            }
+            .bitcoin-tracker {
+                padding: 10px;
+            }
+            .bitcoin-tracker h2 {
+                font-size: 1.5em;
+            }
+            .bitcoin-price {
+                font-size: 1.8em;
+            }
+            .report-links a {
+                font-size: 0.9em;
+                padding: 10px 20px;
+                min-width: 120px;
+            }
+        }
+
+        /* Accessibility Focus Styles */
+        a:focus {
+            outline: 3px dashed var(--accent-hover);
+            outline-offset: 4px;
+        }
+
+        /* Keyframes for Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px 0;
+            font-size: 0.9em;
+            color: var(--text-secondary);
         }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const ws = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
-            ws.onmessage = function (event) {
-                const data = JSON.parse(event.data);
-                const price = parseFloat(data.bitcoin).toFixed(2);
-                document.getElementById('bitcoin-price').innerText = `Bitcoin Price: $${price}`;
-            };
-            ws.onerror = function (error) {
-                console.error('WebSocket error:', error);
-            };
+            const ticker = document.getElementById('bitcoin-price');
+            const progressBar = document.querySelector('.progress-bar');
+            const goal = 100000; // 100k
+            let currentPrice = 0;
+
+            let ws;
+            let reconnectInterval = 5000; // 5 seconds
+
+            function connectWebSocket() {
+                ws = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
+
+                ws.onopen = function () {
+                    console.log('WebSocket connection established.');
+                };
+
+                ws.onmessage = function (event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.bitcoin) {
+                            currentPrice = parseFloat(data.bitcoin);
+                            updatePrice(currentPrice);
+                        }
+                    } catch (error) {
+                        console.error('Error parsing WebSocket message:', error);
+                    }
+                };
+
+                ws.onerror = function (error) {
+                    console.error('WebSocket error:', error);
+                };
+
+                ws.onclose = function (event) {
+                    console.warn(`WebSocket closed: ${event.reason}. Reconnecting in ${reconnectInterval / 1000} seconds...`);
+                    ticker.innerText = 'Bitcoin Price: Reconnecting...';
+                    setTimeout(connectWebSocket, reconnectInterval);
+                };
+            }
+
+            function updatePrice(price) {
+                ticker.innerText = `Bitcoin Price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                const percentage = Math.min((price / goal) * 100, 100);
+                progressBar.style.width = `${percentage}%`;
+
+                // Change progress bar color based on percentage
+                if (percentage < 50) {
+                    progressBar.style.backgroundColor = '#f7931a'; // Bitcoin Orange
+                } else if (percentage < 75) {
+                    progressBar.style.backgroundColor = '#ffd700'; // Gold
+                } else {
+                    progressBar.style.backgroundColor = '#4caf50'; // Green
+                }
+            }
+
+            connectWebSocket();
         });
     </script>
 </head>
 <body>
-    <div>
+    <header>
         <h1>MOASS Reports</h1>
-        <p>Explore our latest due diligence reports.</p>
-        <div class="ticker" id="bitcoin-price">Loading Bitcoin Price...</div>
-        <div class="report-links">
-            <a href="SVMH.html">View SVMH Report</a>
-            <a href="UAVS.html">View UAVS Report</a>
-            <a href="SIRI.html">View SIRI Report</a>
-            <a href="GME.html">View GME Report</a>
-        </div>
-    </div>
+        <p class="tagline">Read our reports while you watch Bitcoin reaches for 100k.</p>
+    </header>
+    <main>
+        <section class="bitcoin-tracker" aria-live="polite">
+            <h2>Live Bitcoin Tracker</h2>
+            <div class="bitcoin-price" id="bitcoin-price">Loading Bitcoin Price...</div>
+            <div class="goal-text">Progress towards $100,000</div>
+            <div class="progress-container" aria-hidden="true">
+                <div class="progress-bar"></div>
+            </div>
+        </section>
+        <nav class="report-links" aria-label="Report Links">
+            <a href="SVMH.html" aria-label="View SVMH Report">SVMH Report</a>
+            <a href="UAVS.html" aria-label="View UAVS Report">UAVS Report</a>
+            <a href="SIRI.html" aria-label="View SIRI Report">SIRI Report</a>
+            <a href="GME.html" aria-label="View GME Report">GME Report</a>
+        </nav>
+    </main>
+    <footer>
+        &copy; 2024 MOASS Reports. All rights reserved.
+    </footer>
 </body>
 </html>
