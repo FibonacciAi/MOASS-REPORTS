@@ -17,6 +17,7 @@
             --progress-bg: #333333;
             --progress-fill: #f7931a;
             --button-hover-scale: 1.05;
+            --max-width-container: 1200px;
         }
 
         * {
@@ -34,6 +35,15 @@
             min-height: 100vh;
             text-align: center;
             padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--max-width-container);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         header {
@@ -55,7 +65,7 @@
 
         .bitcoin-tracker {
             background: #2a2a2a;
-            padding: 20px;
+            padding: 30px 20px;
             border-radius: 10px;
             margin-bottom: 40px;
             position: relative;
@@ -63,6 +73,9 @@
             max-width: 600px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
             animation: fadeIn 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .bitcoin-tracker h2 {
@@ -90,7 +103,7 @@
             height: 100%;
             width: 0%;
             background-color: var(--progress-fill);
-            transition: width 1s ease-in-out;
+            transition: width 1s ease-in-out, background-color 0.3s ease;
         }
 
         .goal-text {
@@ -139,7 +152,7 @@
                 font-size: 1.1em;
             }
             .bitcoin-tracker {
-                padding: 15px;
+                padding: 25px 15px;
             }
             .bitcoin-tracker h2 {
                 font-size: 1.8em;
@@ -162,7 +175,7 @@
                 font-size: 1em;
             }
             .bitcoin-tracker {
-                padding: 10px;
+                padding: 20px 10px;
             }
             .bitcoin-tracker h2 {
                 font-size: 1.5em;
@@ -256,28 +269,30 @@
     </script>
 </head>
 <body>
-    <header>
-        <h1>MOASS Reports</h1>
-        <p class="tagline">Read our reports while you watch Bitcoin reaches for 100k.</p>
-    </header>
-    <main>
-        <section class="bitcoin-tracker" aria-live="polite">
-            <h2>Live Bitcoin Tracker</h2>
-            <div class="bitcoin-price" id="bitcoin-price">Loading Bitcoin Price...</div>
-            <div class="goal-text">Progress towards $100,000</div>
-            <div class="progress-container" aria-hidden="true">
-                <div class="progress-bar"></div>
-            </div>
-        </section>
-        <nav class="report-links" aria-label="Report Links">
-            <a href="SVMH.html" aria-label="View SVMH Report">SVMH Report</a>
-            <a href="UAVS.html" aria-label="View UAVS Report">UAVS Report</a>
-            <a href="SIRI.html" aria-label="View SIRI Report">SIRI Report</a>
-            <a href="GME.html" aria-label="View GME Report">GME Report</a>
-        </nav>
-    </main>
-    <footer>
-        &copy; 2024 MOASS Reports. All rights reserved.
-    </footer>
+    <div class="container">
+        <header>
+            <h1>MOASS Reports</h1>
+            <p class="tagline">Read our reports while you watch Bitcoin reaches for 100k.</p>
+        </header>
+        <main>
+            <section class="bitcoin-tracker" aria-live="polite">
+                <h2>Live Bitcoin Tracker</h2>
+                <div class="bitcoin-price" id="bitcoin-price">Loading Bitcoin Price...</div>
+                <div class="goal-text">Progress towards $100,000</div>
+                <div class="progress-container" aria-hidden="true">
+                    <div class="progress-bar"></div>
+                </div>
+            </section>
+            <nav class="report-links" aria-label="Report Links">
+                <a href="SVMH.html" aria-label="View SVMH Report">SVMH Report</a>
+                <a href="UAVS.html" aria-label="View UAVS Report">UAVS Report</a>
+                <a href="SIRI.html" aria-label="View SIRI Report">SIRI Report</a>
+                <a href="GME.html" aria-label="View GME Report">GME Report</a>
+            </nav>
+        </main>
+        <footer>
+            &copy; 2024 MOASS Reports. All rights reserved.
+        </footer>
+    </div>
 </body>
 </html>
