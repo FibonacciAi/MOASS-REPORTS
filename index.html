@@ -18,6 +18,8 @@
             --progress-fill: #f7931a;
             --button-hover-scale: 1.05;
             --max-width-container: 1200px;
+            --footer-bg: #141414;
+            --footer-padding: 20px;
         }
 
         /* Universal Box Sizing */
@@ -32,7 +34,7 @@
             display: flex;
             flex-direction: column;
             align-items: center; /* Centers container horizontally */
-            justify-content: center; /* Centers container vertically */
+            justify-content: flex-start; /* Start from top */
             min-height: 100vh;
             text-align: center;
             padding: 20px;
@@ -45,7 +47,6 @@
             display: flex;
             flex-direction: column;
             align-items: center; /* Centers children horizontally */
-            /* border: 2px solid red; */ /* Uncomment for debugging */
         }
 
         header {
@@ -63,16 +64,16 @@
         p.tagline {
             font-size: 1.3em;
             color: var(--text-secondary);
-            margin-bottom: 40px;
-            width: 100%;
+            margin: 0 auto 40px auto; /* Top, Right, Bottom, Left */
             max-width: 600px;
+            text-align: center;
         }
 
         .bitcoin-tracker {
             background: #2a2a2a;
             padding: 30px 20px;
             border-radius: 10px;
-            margin-bottom: 40px;
+            margin-bottom: 40px; /* Space below the tracker */
             width: 100%;
             max-width: 600px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
@@ -81,7 +82,6 @@
             flex-direction: column;
             align-items: center; /* Centers internal elements horizontally */
             margin: 0 auto; /* Ensures the tracker itself is centered */
-            /* border: 2px solid blue; */ /* Uncomment for debugging */
         }
 
         .bitcoin-tracker h2 {
@@ -126,6 +126,7 @@
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
+            margin-top: 20px; /* Space above the report links */
         }
 
         .report-links a {
@@ -210,13 +211,15 @@
         }
 
         footer {
-            margin-top: auto;
-            padding: 20px 0;
+            background-color: var(--footer-bg);
+            padding: var(--footer-padding);
             font-size: 0.9em;
             color: var(--text-secondary);
             width: 100%;
             max-width: var(--max-width-container);
             text-align: center;
+            margin-top: 40px; /* Space above the footer */
+            border-top: 1px solid #444;
         }
     </style>
     <script>
