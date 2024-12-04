@@ -82,19 +82,17 @@
         }
     </style>
     <script>
-        async function updateBitcoinPrice() {
-            try {
-                const response = await fetch('https://api.coindesk.com/v1/bpi/currentprice/BTC.json');
-                const data = await response.json();
-                const price = data.bpi.USD.rate_float;
-                document.getElementById('bitcoin-price').innerText = `Bitcoin Price: $${price.toFixed(2)}`;
-            } catch (error) {
-                console.error('Error fetching Bitcoin price:', error);
-            }
-        }
-
-        setInterval(updateBitcoinPrice, 10000); // Update every 10 seconds
-        window.onload = updateBitcoinPrice;
+        document.addEventListener('DOMContentLoaded', function () {
+            const ws = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
+            ws.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                const price = parseFloat(data.bitcoin).toFixed(2);
+                document.getElementById('bitcoin-price').innerText = `Bitcoin Price: $${price}`;
+            };
+            ws.onerror = function (error) {
+                console.error('WebSocket error:', error);
+            };
+        });
     </script>
 </head>
 <body>
