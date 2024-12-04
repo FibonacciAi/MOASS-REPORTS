@@ -74,12 +74,33 @@
                 padding: 8px 16px;
             }
         }
+
+        .ticker {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
     </style>
+    <script>
+        async function updateBitcoinPrice() {
+            try {
+                const response = await fetch('https://api.coindesk.com/v1/bpi/currentprice/BTC.json');
+                const data = await response.json();
+                const price = data.bpi.USD.rate_float;
+                document.getElementById('bitcoin-price').innerText = `Bitcoin Price: $${price.toFixed(2)}`;
+            } catch (error) {
+                console.error('Error fetching Bitcoin price:', error);
+            }
+        }
+
+        setInterval(updateBitcoinPrice, 60000); // Update every minute
+        window.onload = updateBitcoinPrice;
+    </script>
 </head>
 <body>
     <div>
         <h1>MOASS Reports</h1>
         <p>Explore our latest due diligence reports.</p>
+        <div class="ticker" id="bitcoin-price">Loading Bitcoin Price...</div>
         <div class="report-links">
             <a href="SVMH.html">View SVMH Report</a>
             <a href="UAVS.html">View UAVS Report</a>
