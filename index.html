@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOASS Reports</title>
-    <meta name="description" content="Explore the latest due diligence reports on MOASS, including SVMH, UAVS, SIRI, and GME. Stay updated with real-time Bitcoin prices.">
+    <meta name="description" content="Explore the latest due diligence reports on MOASS, including SVMH, UAVS, SIRI, and GME. Stay updated with real-time Bitcoin and GME prices.">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         :root {
@@ -69,7 +69,7 @@
             text-align: center;
         }
 
-        .bitcoin-tracker {
+        .tracker {
             background: #2a2a2a;
             padding: 30px 20px;
             border-radius: 10px;
@@ -84,13 +84,13 @@
             margin: 0 auto; /* Ensures the tracker itself is centered */
         }
 
-        .bitcoin-tracker h2 {
+        .tracker h2 {
             font-size: 2em;
             margin-bottom: 10px;
             color: var(--accent);
         }
 
-        .bitcoin-price {
+        .price {
             font-size: 2.5em;
             font-weight: bold;
             margin-bottom: 20px;
@@ -159,13 +159,13 @@
             p.tagline {
                 font-size: 1.1em;
             }
-            .bitcoin-tracker {
+            .tracker {
                 padding: 25px 15px;
             }
-            .bitcoin-tracker h2 {
+            .tracker h2 {
                 font-size: 1.8em;
             }
-            .bitcoin-price {
+            .price {
                 font-size: 2em;
             }
             .report-links a {
@@ -182,13 +182,13 @@
             p.tagline {
                 font-size: 1em;
             }
-            .bitcoin-tracker {
+            .tracker {
                 padding: 20px 10px;
             }
-            .bitcoin-tracker h2 {
+            .tracker h2 {
                 font-size: 1.5em;
             }
-            .bitcoin-price {
+            .price {
                 font-size: 1.8em;
             }
             .report-links a {
@@ -224,60 +224,110 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const ticker = document.getElementById('bitcoin-price');
-            const progressBar = document.querySelector('.progress-bar');
-            const goal = 100000; // 100k
-            let currentPrice = 0;
+            const bitcoinTicker = document.getElementById('bitcoin-price');
+            const gmeTicker = document.getElementById('gme-price');
+            const bitcoinProgressBar = document.querySelector('.bitcoin-progress-bar');
+            const gmeProgressBar = document.querySelector('.gme-progress-bar');
+            const bitcoinGoal = 100000; // 100k
+            const gmeGoal = 500; // $500
+            let bitcoinPrice = 0;
+            let gmePrice = 0;
 
-            let ws;
+            let bitcoinWs, gmeWs;
             let reconnectInterval = 5000; // 5 seconds
 
-            function connectWebSocket() {
-                ws = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
+            function connectBitcoinWebSocket() {
+                bitcoinWs = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
 
-                ws.onopen = function () {
-                    console.log('WebSocket connection established.');
+                bitcoinWs.onopen = function () {
+                    console.log('Bitcoin WebSocket connection established.');
                 };
 
-                ws.onmessage = function (event) {
+                bitcoinWs.onmessage = function (event) {
                     try {
                         const data = JSON.parse(event.data);
                         if (data.bitcoin) {
-                            currentPrice = parseFloat(data.bitcoin);
-                            updatePrice(currentPrice);
+                            bitcoinPrice = parseFloat(data.bitcoin);
+                            updateBitcoinPrice(bitcoinPrice);
                         }
                     } catch (error) {
-                        console.error('Error parsing WebSocket message:', error);
+                        console.error('Error parsing Bitcoin WebSocket message:', error);
                     }
                 };
 
-                ws.onerror = function (error) {
-                    console.error('WebSocket error:', error);
+                bitcoinWs.onerror = function (error) {
+                    console.error('Bitcoin WebSocket error:', error);
                 };
 
-                ws.onclose = function (event) {
-                    console.warn(`WebSocket closed: ${event.reason}. Reconnecting in ${reconnectInterval / 1000} seconds...`);
-                    ticker.innerText = 'Bitcoin Price: Reconnecting...';
-                    setTimeout(connectWebSocket, reconnectInterval);
+                bitcoinWs.onclose = function (event) {
+                    console.warn(`Bitcoin WebSocket closed: ${event.reason}. Reconnecting in ${reconnectInterval / 1000} seconds...`);
+                    bitcoinTicker.innerText = 'Bitcoin Price: Reconnecting...';
+                    setTimeout(connectBitcoinWebSocket, reconnectInterval);
                 };
             }
 
-            function updatePrice(price) {
-                ticker.innerText = `Bitcoin Price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                const percentage = Math.min((price / goal) * 100, 100);
-                progressBar.style.width = `${percentage}%`;
+            function connectGmeWebSocket() {
+                gmeWs = new WebSocket('wss://ws.coincap.io/prices?assets=gamestop');
+
+                gmeWs.onopen = function () {
+                    console.log('GME WebSocket connection established.');
+                };
+
+                gmeWs.onmessage = function (event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.gamestop) {
+                            gmePrice = parseFloat(data.gamestop);
+                            updateGmePrice(gmePrice);
+                        }
+                    } catch (error) {
+                        console.error('Error parsing GME WebSocket message:', error);
+                    }
+                };
+
+                gmeWs.onerror = function (error) {
+                    console.error('GME WebSocket error:', error);
+                };
+
+                gmeWs.onclose = function (event) {
+                    console.warn(`GME WebSocket closed: ${event.reason}. Reconnecting in ${reconnectInterval / 1000} seconds...`);
+                    gmeTicker.innerText = 'GME Price: Reconnecting...';
+                    setTimeout(connectGmeWebSocket, reconnectInterval);
+                };
+            }
+
+            function updateBitcoinPrice(price) {
+                bitcoinTicker.innerText = `Bitcoin Price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                const percentage = Math.min((price / bitcoinGoal) * 100, 100);
+                bitcoinProgressBar.style.width = `${percentage}%`;
 
                 // Change progress bar color based on percentage
                 if (percentage < 50) {
-                    progressBar.style.backgroundColor = '#f7931a'; // Bitcoin Orange
+                    bitcoinProgressBar.style.backgroundColor = '#f7931a'; // Bitcoin Orange
                 } else if (percentage < 75) {
-                    progressBar.style.backgroundColor = '#ffd700'; // Gold
+                    bitcoinProgressBar.style.backgroundColor = '#ffd700'; // Gold
                 } else {
-                    progressBar.style.backgroundColor = '#4caf50'; // Green
+                    bitcoinProgressBar.style.backgroundColor = '#4caf50'; // Green
                 }
             }
 
-            connectWebSocket();
+            function updateGmePrice(price) {
+                gmeTicker.innerText = `GME Price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                const percentage = Math.min((price / gmeGoal) * 100, 100);
+                gmeProgressBar.style.width = `${percentage}%`;
+
+                // Change progress bar color based on percentage
+                if (percentage < 50) {
+                    gmeProgressBar.style.backgroundColor = '#f7931a'; // Bitcoin Orange
+                } else if (percentage < 75) {
+                    gmeProgressBar.style.backgroundColor = '#ffd700'; // Gold
+                } else {
+                    gmeProgressBar.style.backgroundColor = '#4caf50'; // Green
+                }
+            }
+
+            connectBitcoinWebSocket();
+            connectGmeWebSocket();
         });
     </script>
 </head>
@@ -285,15 +335,23 @@
     <div class="container">
         <header>
             <h1>MOASS Reports</h1>
-            <p class="tagline">Read our reports while you watch Bitcoin reach for 100k. Follow @_D_741Stef on X! 😉</p>
+            <p class="tagline">Read our reports while you watch Bitcoin reach for 100k and GME reach for $500. Follow @_D_741Stef on X! 😉</p>
         </header>
         <main>
-            <section class="bitcoin-tracker" aria-live="polite">
+            <section class="tracker" aria-live="polite">
                 <h2>Live Bitcoin Tracker</h2>
-                <div class="bitcoin-price" id="bitcoin-price">Loading Bitcoin Price...</div>
+                <div class="price" id="bitcoin-price">Loading Bitcoin Price...</div>
                 <div class="goal-text">Progress towards $100,000</div>
                 <div class="progress-container" aria-hidden="true">
-                    <div class="progress-bar"></div>
+                    <div class="progress-bar bitcoin-progress-bar"></div>
+                </div>
+            </section>
+            <section class="tracker" aria-live="polite">
+                <h2>Live GME Tracker</h2>
+                <div class="price" id="gme-price">Loading GME Price...</div>
+                <div class="goal-text">Progress towards $500</div>
+                <div class="progress-container" aria-hidden="true">
+                    <div class="progress-bar gme-progress-bar"></div>
                 </div>
             </section>
             <nav class="report-links" aria-label="Report Links">
