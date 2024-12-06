@@ -83,6 +83,36 @@
             line-height: 1.5;
         }
 
+        /* Report Links */
+        .report-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+            margin-bottom: 60px; /* Space below report links */
+        }
+
+        .report-links a {
+            background-color: var(--button-bg);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .report-links a:hover,
+        .report-links a:focus {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-2px);
+            outline: none;
+        }
+
         /* Sections */
         .section-group {
             width: 100%;
@@ -154,35 +184,6 @@
             transition: width var(--transition-speed), background-color var(--transition-speed);
         }
 
-        /* Report Links */
-        .report-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .report-links a {
-            background-color: var(--button-bg);
-            color: #ffffff;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: background-color var(--transition-speed), transform var(--transition-speed);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        .report-links a:hover,
-        .report-links a:focus {
-            background-color: var(--button-hover-bg);
-            transform: translateY(-2px);
-            outline: none;
-        }
-
         /* Twitter Feed Styling */
         .twitter-feed {
             width: 100%;
@@ -191,6 +192,7 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 60px; /* Space below Twitter feed */
         }
 
         .twitter-feed .twitter-timeline {
@@ -311,7 +313,7 @@
                     progressBarClass: 'dogecoin-progress-bar',
                     goal: 1, // $1
                 },
-                // Stocks (using Alpha Vantage)
+                // Stocks (using Alpha Vantage via Server-Side Proxy)
                 gamestop: {
                     type: 'stock',
                     elementId: 'gme-price',
@@ -335,8 +337,8 @@
                 }
             };
 
-            // Alpha Vantage API Key
-            const alphaVantageApiKey = 'YOUR_ALPHA_VANTAGE_API_KEY'; // Replace with your actual Alpha Vantage API key
+            // Server URL (update if deployed to a different URL)
+            const serverUrl = 'http://localhost:5000'; // Replace with your deployed server URL if necessary
 
             // Function to initialize WebSocket connections for Cryptocurrencies
             function initializeCryptoWebSockets() {
@@ -380,7 +382,7 @@
                 }
             }
 
-            // Function to initialize REST API polling for Stocks
+            // Function to initialize REST API polling for Stocks via Server-Side Proxy
             function initializeStockPolling() {
                 const stockAssets = [];
                 for (const key in assets) {
@@ -390,25 +392,28 @@
                 }
 
                 if (stockAssets.length > 0) {
-                    // Alpha Vantage allows 5 requests per minute on free tier
                     const interval = 60000; // 60 seconds
 
-                    // Function to fetch stock prices
                     function fetchStockPrices() {
                         stockAssets.forEach((assetKey, index) => {
-                            // To respect rate limits, stagger the requests by 15 seconds
                             setTimeout(() => {
                                 const symbol = assets[assetKey].symbol;
-                                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${alphaVantageApiKey}`;
+                                const url = `${serverUrl}/api/stock/${symbol}`;
 
                                 fetch(url)
-                                    .then(response => response.json())
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`Network response was not ok: ${response.statusText}`);
+                                        }
+                                        return response.json();
+                                    })
                                     .then(data => {
-                                        if (data['Global Quote'] && data['Global Quote']['05. price']) {
-                                            const price = parseFloat(data['Global Quote']['05. price']);
+                                        console.log(`Data for ${symbol}:`, data);
+                                        if (data.price) {
+                                            const price = parseFloat(data.price);
                                             updatePrice(assetKey, price);
                                         } else {
-                                            console.error(`No data found for symbol: ${symbol}`);
+                                            console.error(`No price data found for symbol: ${symbol}`, data);
                                             const priceElement = document.getElementById(assets[assetKey].elementId);
                                             if (priceElement) {
                                                 priceElement.innerText = `${formatAssetName(assetKey)} Price: Data not available`;
@@ -451,11 +456,11 @@
 
                     // Change progress bar color based on percentage
                     if (percentage < 50) {
-                        progressBar.style.backgroundColor = '#f7931a'; // Twitter Blue
+                        progressBar.style.backgroundColor = '#f7931a'; // Example color
                     } else if (percentage < 75) {
-                        progressBar.style.backgroundColor = '#1DA1F2'; // Lighter Blue
+                        progressBar.style.backgroundColor = '#1DA1F2'; // Example color
                     } else {
-                        progressBar.style.backgroundColor = '#0a74da'; // Darker Blue
+                        progressBar.style.backgroundColor = '#0a74da'; // Example color
                     }
                 }
             }
@@ -494,6 +499,14 @@
             <h1>MOASS Reports</h1>
             <p class="tagline">Read our reports while you watch Bitcoin, ETH, Litecoin, XRP, Stellar, Doge, GME, SIRI, and TSLA reach their goals. Follow @_D_741Stef on X! 😉</p>
         </header>
+
+        <!-- Report Links -->
+        <nav class="report-links" aria-label="Report Links">
+            <a href="SVMH.html" aria-label="View SVMH Report">SVMH Report</a>
+            <a href="UAVS.html" aria-label="View UAVS Report">UAVS Report</a>
+            <a href="SIRI.html" aria-label="View SIRI Report">SIRI Report</a>
+            <a href="GME.html" aria-label="View GME Report">GME Report</a>
+        </nav>
 
         <!-- Main Content -->
         <main>
@@ -608,14 +621,6 @@
                     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </div>
             </section>
-
-            <!-- Report Links -->
-            <nav class="report-links" aria-label="Report Links">
-                <a href="SVMH.html" aria-label="View SVMH Report">SVMH Report</a>
-                <a href="UAVS.html" aria-label="View UAVS Report">UAVS Report</a>
-                <a href="SIRI.html" aria-label="View SIRI Report">SIRI Report</a>
-                <a href="GME.html" aria-label="View GME Report">GME Report</a>
-            </nav>
         </main>
 
         <!-- Footer -->
