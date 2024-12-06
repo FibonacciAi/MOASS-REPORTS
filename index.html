@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOASS Reports</title>
-    <meta name="description" content="Explore the latest due diligence reports on MOASS, including SVMH, UAVS, SIRI, and GME. Stay updated with real-time Bitcoin and GME prices.">
+    <meta name="description" content="Explore the latest due diligence reports on MOASS, including SVMH, UAVS, SIRI, and GME. Stay updated with real-time prices.">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         :root {
@@ -65,44 +65,61 @@
             font-size: 1.3em;
             color: var(--text-secondary);
             margin: 0 auto 40px auto; /* Top, Right, Bottom, Left */
-            max-width: 600px;
+            max-width: 800px;
             text-align: center;
+        }
+
+        .section-group {
+            width: 100%;
+            max-width: var(--max-width-container);
+            margin-bottom: 40px;
+        }
+
+        .section-group h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: var(--accent);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .trackers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
         }
 
         .tracker {
             background: #2a2a2a;
-            padding: 30px 20px;
+            padding: 20px;
             border-radius: 10px;
-            margin-bottom: 40px; /* Space below the tracker */
-            width: 100%;
-            max-width: 600px;
+            width: 280px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
             animation: fadeIn 1s ease-in-out;
             display: flex;
             flex-direction: column;
             align-items: center; /* Centers internal elements horizontally */
-            margin: 0 auto; /* Ensures the tracker itself is centered */
         }
 
-        .tracker h2 {
-            font-size: 2em;
+        .tracker h3 {
+            font-size: 1.5em;
             margin-bottom: 10px;
             color: var(--accent);
         }
 
         .price {
-            font-size: 2.5em;
+            font-size: 1.8em;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .progress-container {
             background-color: var(--progress-bg);
             border-radius: 20px;
             overflow: hidden;
-            height: 25px;
+            height: 20px;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .progress-bar {
@@ -113,7 +130,7 @@
         }
 
         .goal-text {
-            font-size: 1em;
+            font-size: 0.9em;
             color: var(--text-secondary);
             margin-bottom: 10px;
         }
@@ -123,7 +140,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             width: 100%;
             margin-top: 20px; /* Space above the report links */
@@ -152,6 +169,12 @@
         }
 
         /* Responsive Design */
+        @media (max-width: 1200px) {
+            .trackers {
+                justify-content: center;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.5em;
@@ -159,14 +182,19 @@
             p.tagline {
                 font-size: 1.1em;
             }
-            .tracker {
-                padding: 25px 15px;
+            .section-group h2 {
+                font-size: 2em;
             }
-            .tracker h2 {
-                font-size: 1.8em;
+            .tracker {
+                width: 100%;
+                max-width: 400px;
+                padding: 15px;
+            }
+            .tracker h3 {
+                font-size: 1.3em;
             }
             .price {
-                font-size: 2em;
+                font-size: 1.6em;
             }
             .report-links a {
                 font-size: 1em;
@@ -182,14 +210,19 @@
             p.tagline {
                 font-size: 1em;
             }
-            .tracker {
-                padding: 20px 10px;
+            .section-group h2 {
+                font-size: 1.8em;
             }
-            .tracker h2 {
-                font-size: 1.5em;
+            .tracker {
+                width: 100%;
+                max-width: 100%;
+                padding: 10px;
+            }
+            .tracker h3 {
+                font-size: 1.2em;
             }
             .price {
-                font-size: 1.8em;
+                font-size: 1.4em;
             }
             .report-links a {
                 font-size: 0.9em;
@@ -224,110 +257,218 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const bitcoinTicker = document.getElementById('bitcoin-price');
-            const gmeTicker = document.getElementById('gme-price');
-            const bitcoinProgressBar = document.querySelector('.bitcoin-progress-bar');
-            const gmeProgressBar = document.querySelector('.gme-progress-bar');
-            const bitcoinGoal = 100000; // 100k
-            const gmeGoal = 500; // $500
-            let bitcoinPrice = 0;
-            let gmePrice = 0;
+            // Configuration for Assets
+            const assets = {
+                // Cryptocurrencies (using CoinCap)
+                bitcoin: {
+                    type: 'crypto',
+                    elementId: 'bitcoin-price',
+                    progressBarClass: 'bitcoin-progress-bar',
+                    goal: 100000, // $100,000
+                },
+                ethereum: {
+                    type: 'crypto',
+                    elementId: 'eth-price',
+                    progressBarClass: 'eth-progress-bar',
+                    goal: 5000, // $5,000
+                },
+                litecoin: {
+                    type: 'crypto',
+                    elementId: 'litecoin-price',
+                    progressBarClass: 'litecoin-progress-bar',
+                    goal: 420, // $420
+                },
+                xrp: {
+                    type: 'crypto',
+                    elementId: 'xrp-price',
+                    progressBarClass: 'xrp-progress-bar',
+                    goal: 5, // $5
+                },
+                stellar: {
+                    type: 'crypto',
+                    elementId: 'stellar-price',
+                    progressBarClass: 'stellar-progress-bar',
+                    goal: 1, // $1
+                },
+                dogecoin: {
+                    type: 'crypto',
+                    elementId: 'dogecoin-price',
+                    progressBarClass: 'dogecoin-progress-bar',
+                    goal: 1, // $1
+                },
+                // Stocks (using Alpha Vantage)
+                gamestop: {
+                    type: 'stock',
+                    elementId: 'gme-price',
+                    progressBarClass: 'gme-progress-bar',
+                    goal: 420, // $420
+                    symbol: 'GME', // Stock symbol for Alpha Vantage
+                },
+                siriusxm: {
+                    type: 'stock',
+                    elementId: 'siri-price',
+                    progressBarClass: 'siri-progress-bar',
+                    goal: 69, // $69
+                    symbol: 'SIRI', // Stock symbol for Alpha Vantage
+                },
+                tesla: {
+                    type: 'stock',
+                    elementId: 'tsla-price',
+                    progressBarClass: 'tsla-progress-bar',
+                    goal: 1470, // $1,470
+                    symbol: 'TSLA', // Stock symbol for Alpha Vantage
+                }
+            };
 
-            let bitcoinWs, gmeWs;
-            let reconnectInterval = 5000; // 5 seconds
+            // Alpha Vantage API Key
+            const alphaVantageApiKey = 'YOUR_ALPHA_VANTAGE_API_KEY'; // Replace with your actual Alpha Vantage API key
 
-            function connectBitcoinWebSocket() {
-                bitcoinWs = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin');
-
-                bitcoinWs.onopen = function () {
-                    console.log('Bitcoin WebSocket connection established.');
-                };
-
-                bitcoinWs.onmessage = function (event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        if (data.bitcoin) {
-                            bitcoinPrice = parseFloat(data.bitcoin);
-                            updateBitcoinPrice(bitcoinPrice);
-                        }
-                    } catch (error) {
-                        console.error('Error parsing Bitcoin WebSocket message:', error);
+            // Function to initialize WebSocket connections for Cryptocurrencies
+            function initializeCryptoWebSockets() {
+                const cryptoAssets = [];
+                for (const key in assets) {
+                    if (assets[key].type === 'crypto') {
+                        cryptoAssets.push(key);
                     }
-                };
+                }
 
-                bitcoinWs.onerror = function (error) {
-                    console.error('Bitcoin WebSocket error:', error);
-                };
+                if (cryptoAssets.length > 0) {
+                    const cryptoWsUrl = `wss://ws.coincap.io/prices?assets=${cryptoAssets.join(',')}`;
+                    const cryptoWs = new WebSocket(cryptoWsUrl);
 
-                bitcoinWs.onclose = function (event) {
-                    console.warn(`Bitcoin WebSocket closed: ${event.reason}. Reconnecting in ${reconnectInterval / 1000} seconds...`);
-                    bitcoinTicker.innerText = 'Bitcoin Price: Reconnecting...';
-                    setTimeout(connectBitcoinWebSocket, reconnectInterval);
-                };
-            }
+                    cryptoWs.onopen = function () {
+                        console.log('CoinCap WebSocket connection established for cryptocurrencies.');
+                    };
 
-            function connectGmeWebSocket() {
-                gmeWs = new WebSocket('wss://ws.coincap.io/prices?assets=gamestop');
-
-                gmeWs.onopen = function () {
-                    console.log('GME WebSocket connection established.');
-                };
-
-                gmeWs.onmessage = function (event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        if (data.gamestop) {
-                            gmePrice = parseFloat(data.gamestop);
-                            updateGmePrice(gmePrice);
+                    cryptoWs.onmessage = function (event) {
+                        try {
+                            const data = JSON.parse(event.data);
+                            for (const asset in data) {
+                                if (assets[asset]) {
+                                    const price = parseFloat(data[asset]);
+                                    updatePrice(asset, price);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error parsing CoinCap WebSocket message:', error);
                         }
-                    } catch (error) {
-                        console.error('Error parsing GME WebSocket message:', error);
-                    }
-                };
+                    };
 
-                gmeWs.onerror = function (error) {
-                    console.error('GME WebSocket error:', error);
-                };
+                    cryptoWs.onerror = function (error) {
+                        console.error('CoinCap WebSocket error:', error);
+                    };
 
-                gmeWs.onclose = function (event) {
-                    console.warn(`GME WebSocket closed: ${event.reason}. Reconnecting in ${reconnectInterval / 1000} seconds...`);
-                    gmeTicker.innerText = 'GME Price: Reconnecting...';
-                    setTimeout(connectGmeWebSocket, reconnectInterval);
-                };
-            }
-
-            function updateBitcoinPrice(price) {
-                bitcoinTicker.innerText = `Bitcoin Price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                const percentage = Math.min((price / bitcoinGoal) * 100, 100);
-                bitcoinProgressBar.style.width = `${percentage}%`;
-
-                // Change progress bar color based on percentage
-                if (percentage < 50) {
-                    bitcoinProgressBar.style.backgroundColor = '#f7931a'; // Bitcoin Orange
-                } else if (percentage < 75) {
-                    bitcoinProgressBar.style.backgroundColor = '#ffd700'; // Gold
-                } else {
-                    bitcoinProgressBar.style.backgroundColor = '#4caf50'; // Green
+                    cryptoWs.onclose = function (event) {
+                        console.warn(`CoinCap WebSocket closed: ${event.reason}. Reconnecting in 5 seconds...`);
+                        setTimeout(initializeCryptoWebSockets, 5000); // Attempt reconnection
+                    };
                 }
             }
 
-            function updateGmePrice(price) {
-                gmeTicker.innerText = `GME Price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                const percentage = Math.min((price / gmeGoal) * 100, 100);
-                gmeProgressBar.style.width = `${percentage}%`;
+            // Function to initialize REST API polling for Stocks
+            function initializeStockPolling() {
+                const stockAssets = [];
+                for (const key in assets) {
+                    if (assets[key].type === 'stock') {
+                        stockAssets.push(key);
+                    }
+                }
 
-                // Change progress bar color based on percentage
-                if (percentage < 50) {
-                    gmeProgressBar.style.backgroundColor = '#f7931a'; // Bitcoin Orange
-                } else if (percentage < 75) {
-                    gmeProgressBar.style.backgroundColor = '#ffd700'; // Gold
-                } else {
-                    gmeProgressBar.style.backgroundColor = '#4caf50'; // Green
+                if (stockAssets.length > 0) {
+                    // Alpha Vantage allows 5 requests per minute on free tier
+                    const interval = 60000; // 60 seconds
+
+                    // Function to fetch stock prices
+                    function fetchStockPrices() {
+                        stockAssets.forEach((assetKey, index) => {
+                            // To respect rate limits, stagger the requests by 15 seconds
+                            setTimeout(() => {
+                                const symbol = assets[assetKey].symbol;
+                                const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${alphaVantageApiKey}`;
+
+                                fetch(url)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data['Global Quote'] && data['Global Quote']['05. price']) {
+                                            const price = parseFloat(data['Global Quote']['05. price']);
+                                            updatePrice(assetKey, price);
+                                        } else {
+                                            console.error(`No data found for symbol: ${symbol}`);
+                                            const priceElement = document.getElementById(assets[assetKey].elementId);
+                                            if (priceElement) {
+                                                priceElement.innerText = `${formatAssetName(assetKey)} Price: Data not available`;
+                                            }
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error(`Error fetching data for symbol: ${symbol}`, error);
+                                        const priceElement = document.getElementById(assets[assetKey].elementId);
+                                        if (priceElement) {
+                                            priceElement.innerText = `${formatAssetName(assetKey)} Price: Error loading data`;
+                                        }
+                                    });
+                            }, index * 15000); // 15 seconds delay between requests
+                        });
+                    }
+
+                    // Initial fetch
+                    fetchStockPrices();
+
+                    // Set interval for periodic fetching
+                    setInterval(fetchStockPrices, interval);
                 }
             }
 
-            connectBitcoinWebSocket();
-            connectGmeWebSocket();
+            // Function to update price and progress bar
+            function updatePrice(assetKey, price) {
+                const asset = assets[assetKey];
+                if (!asset) return;
+
+                const priceElement = document.getElementById(asset.elementId);
+                if (priceElement) {
+                    priceElement.innerText = `${formatAssetName(assetKey)} Price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                }
+
+                const progressBar = document.querySelector(`.${asset.progressBarClass}`);
+                if (progressBar) {
+                    const percentage = Math.min((price / asset.goal) * 100, 100);
+                    progressBar.style.width = `${percentage}%`;
+
+                    // Change progress bar color based on percentage
+                    if (percentage < 50) {
+                        progressBar.style.backgroundColor = '#f7931a'; // Bitcoin Orange
+                    } else if (percentage < 75) {
+                        progressBar.style.backgroundColor = '#ffd700'; // Gold
+                    } else {
+                        progressBar.style.backgroundColor = '#4caf50'; // Green
+                    }
+                }
+            }
+
+            // Helper function to format asset names
+            function formatAssetName(key) {
+                switch(key) {
+                    case 'bitcoin': return 'Bitcoin';
+                    case 'ethereum': return 'Ethereum';
+                    case 'litecoin': return 'Litecoin';
+                    case 'xrp': return 'XRP';
+                    case 'stellar': return 'Stellar Lumens';
+                    case 'dogecoin': return 'Dogecoin';
+                    case 'gamestop': return 'GME';
+                    case 'siriusxm': return 'SIRI';
+                    case 'tesla': return 'TSLA';
+                    default: return key.toUpperCase();
+                }
+            }
+
+            // Initialize all connections and polling
+            function initializeAll() {
+                initializeCryptoWebSockets();
+                initializeStockPolling();
+            }
+
+            // Start initialization
+            initializeAll();
         });
     </script>
 </head>
@@ -335,25 +476,112 @@
     <div class="container">
         <header>
             <h1>MOASS Reports</h1>
-            <p class="tagline">Read our reports while you watch Bitcoin reach for 100k and GME reach for $500. Follow @_D_741Stef on X! 😉</p>
+            <p class="tagline">Read our reports while you watch Bitcoin, ETH, Litecoin, XRP, Stellar, Doge, GME, SIRI, and TSLA reach their goals. Follow @_D_741Stef on X! 😉</p>
         </header>
         <main>
-            <section class="tracker" aria-live="polite">
-                <h2>Live Bitcoin Tracker</h2>
-                <div class="price" id="bitcoin-price">Loading Bitcoin Price...</div>
-                <div class="goal-text">Progress towards $100,000</div>
-                <div class="progress-container" aria-hidden="true">
-                    <div class="progress-bar bitcoin-progress-bar"></div>
+            <!-- Cryptocurrency Trackers -->
+            <section class="section-group">
+                <h2>Cryptocurrency Trackers</h2>
+                <div class="trackers">
+                    <!-- Bitcoin Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>Bitcoin</h3>
+                        <div class="price" id="bitcoin-price">Loading Bitcoin Price...</div>
+                        <div class="goal-text">Progress towards $100,000</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar bitcoin-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Ethereum Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>Ethereum (ETH)</h3>
+                        <div class="price" id="eth-price">Loading Ethereum Price...</div>
+                        <div class="goal-text">Progress towards $5,000</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar eth-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Litecoin Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>Litecoin</h3>
+                        <div class="price" id="litecoin-price">Loading Litecoin Price...</div>
+                        <div class="goal-text">Progress towards $420</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar litecoin-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- XRP Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>XRP (Ripple)</h3>
+                        <div class="price" id="xrp-price">Loading XRP Price...</div>
+                        <div class="goal-text">Progress towards $5</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar xrp-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stellar Lumens Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>Stellar Lumens</h3>
+                        <div class="price" id="stellar-price">Loading Stellar Lumens Price...</div>
+                        <div class="goal-text">Progress towards $1</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar stellar-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Dogecoin Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>Dogecoin</h3>
+                        <div class="price" id="dogecoin-price">Loading Dogecoin Price...</div>
+                        <div class="goal-text">Progress towards $1</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar dogecoin-progress-bar"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
-            <section class="tracker" aria-live="polite">
-                <h2>Live GME Tracker</h2>
-                <div class="price" id="gme-price">Loading GME Price...</div>
-                <div class="goal-text">Progress towards $500</div>
-                <div class="progress-container" aria-hidden="true">
-                    <div class="progress-bar gme-progress-bar"></div>
+
+            <!-- Stock Trackers -->
+            <section class="section-group">
+                <h2>Stock Trackers</h2>
+                <div class="trackers">
+                    <!-- GME Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>GME</h3>
+                        <div class="price" id="gme-price">Loading GME Price...</div>
+                        <div class="goal-text">Progress towards $420</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar gme-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- SIRI Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>SIRI (SiriusXM)</h3>
+                        <div class="price" id="siri-price">Loading SIRI Price...</div>
+                        <div class="goal-text">Progress towards $69</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar siri-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- TSLA Tracker -->
+                    <div class="tracker" aria-live="polite">
+                        <h3>TSLA (Tesla)</h3>
+                        <div class="price" id="tsla-price">Loading TSLA Price...</div>
+                        <div class="goal-text">Progress towards $1,470</div>
+                        <div class="progress-container" aria-hidden="true">
+                            <div class="progress-bar tsla-progress-bar"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
+
+            <!-- Report Links -->
             <nav class="report-links" aria-label="Report Links">
                 <a href="SVMH.html" aria-label="View SVMH Report">SVMH Report</a>
                 <a href="UAVS.html" aria-label="View UAVS Report">UAVS Report</a>
