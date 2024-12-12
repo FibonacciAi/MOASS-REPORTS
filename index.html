@@ -1,3 +1,12 @@
+To enhance the performance and live results of all tickers and fix the issue with non-crypto stocks not returning prices, follow these steps:
+
+1. Optimize the WebSocket connection for cryptocurrencies.
+2. Improve the interval and error handling for stock data fetching.
+3. Ensure the stock data fetch URL is correct and operational.
+
+Here is the updated code:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -392,43 +401,38 @@
                 }
 
                 if (stockAssets.length > 0) {
-                    const interval = 60000; // 60 seconds
+                    const interval = 30000; // 30 seconds
 
-                    function fetchStockPrices() {
-                        stockAssets.forEach((assetKey, index) => {
-                            setTimeout(() => {
-                                const symbol = assets[assetKey].symbol;
-                                const url = `${serverUrl}/api/stock/${symbol}`;
-
-                                fetch(url)
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error(`Network response was not ok: ${response.statusText}`);
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        console.log(`Data for ${symbol}:`, data);
-                                        if (data.price) {
-                                            const price = parseFloat(data.price);
-                                            updatePrice(assetKey, price);
-                                        } else {
-                                            console.error(`No price data found for symbol: ${symbol}`, data);
-                                            const priceElement = document.getElementById(assets[assetKey].elementId);
-                                            if (priceElement) {
-                                                priceElement.innerText = `${formatAssetName(assetKey)} Price: Data not available`;
-                                            }
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error(`Error fetching data for symbol: ${symbol}`, error);
-                                        const priceElement = document.getElementById(assets[assetKey].elementId);
-                                        if (priceElement) {
-                                            priceElement.innerText = `${formatAssetName(assetKey)} Price: Error loading data`;
-                                        }
-                                    });
-                            }, index * 15000); // 15 seconds delay between requests
+                    async function fetchStockPrices() {
+                        const promises = stockAssets.map(async (assetKey) => {
+                            const symbol = assets[assetKey].symbol;
+                            const url = `${serverUrl}/api/stock/${symbol}`;
+                            try {
+                                const response = await fetch(url);
+                                if (!response.ok) {
+                                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                                }
+                                const data = await response.json();
+                                if (data.price) {
+                                    const price = parseFloat(data.price);
+                                    updatePrice(assetKey, price);
+                                } else {
+                                    console.error(`No price data found for symbol: ${symbol}`, data);
+                                    const priceElement = document.getElementById(assets[assetKey].elementId);
+                                    if (priceElement) {
+                                        priceElement.innerText = `${formatAssetName(assetKey)} Price: Data not available`;
+                                    }
+                                }
+                            } catch (error) {
+                                console.error(`Error fetching data for symbol: ${symbol}`, error);
+                                const priceElement = document.getElementById(assets[assetKey].elementId);
+                                if (priceElement) {
+                                    priceElement.innerText = `${formatAssetName(assetKey)} Price: Error loading data`;
+                                }
+                            }
                         });
+
+                        await Promise.all(promises);
                     }
 
                     // Initial fetch
@@ -548,85 +552,4 @@
                     <div class="tracker" aria-live="polite">
                         <h3>XRP (Ripple)</h3>
                         <div class="price" id="xrp-price">Loading XRP Price...</div>
-                        <div class="goal-text">Progress towards $5</div>
-                        <div class="progress-container" aria-hidden="true">
-                            <div class="progress-bar xrp-progress-bar"></div>
-                        </div>
-                    </div>
-
-                    <!-- Stellar Lumens Tracker -->
-                    <div class="tracker" aria-live="polite">
-                        <h3>Stellar Lumens</h3>
-                        <div class="price" id="stellar-price">Loading Stellar Lumens Price...</div>
-                        <div class="goal-text">Progress towards $1</div>
-                        <div class="progress-container" aria-hidden="true">
-                            <div class="progress-bar stellar-progress-bar"></div>
-                        </div>
-                    </div>
-
-                    <!-- Dogecoin Tracker -->
-                    <div class="tracker" aria-live="polite">
-                        <h3>Dogecoin</h3>
-                        <div class="price" id="dogecoin-price">Loading Dogecoin Price...</div>
-                        <div class="goal-text">Progress towards $1</div>
-                        <div class="progress-container" aria-hidden="true">
-                            <div class="progress-bar dogecoin-progress-bar"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Stock Trackers -->
-            <section class="section-group">
-                <h2>Stock Trackers</h2>
-                <div class="trackers">
-                    <!-- GME Tracker -->
-                    <div class="tracker" aria-live="polite">
-                        <h3>GME</h3>
-                        <div class="price" id="gme-price">Loading GME Price...</div>
-                        <div class="goal-text">Progress towards $420</div>
-                        <div class="progress-container" aria-hidden="true">
-                            <div class="progress-bar gme-progress-bar"></div>
-                        </div>
-                    </div>
-
-                    <!-- SIRI Tracker -->
-                    <div class="tracker" aria-live="polite">
-                        <h3>SIRI (SiriusXM)</h3>
-                        <div class="price" id="siri-price">Loading SIRI Price...</div>
-                        <div class="goal-text">Progress towards $69</div>
-                        <div class="progress-container" aria-hidden="true">
-                            <div class="progress-bar siri-progress-bar"></div>
-                        </div>
-                    </div>
-
-                    <!-- TSLA Tracker -->
-                    <div class="tracker" aria-live="polite">
-                        <h3>TSLA (Tesla)</h3>
-                        <div class="price" id="tsla-price">Loading TSLA Price...</div>
-                        <div class="goal-text">Progress towards $1,470</div>
-                        <div class="progress-container" aria-hidden="true">
-                            <div class="progress-bar tsla-progress-bar"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Follow Me on X Section -->
-            <section class="section-group">
-                <h2>Follow Me on X</h2>
-                <div class="twitter-feed">
-                    <!-- Embedded Twitter Timeline -->
-                    <a class="twitter-timeline" href="https://twitter.com/_D_741Stef?ref_src=twsrc%5Etfw">Tweets by @_D_741Stef</a>
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer>
-            &copy; 2024 MOASS Reports. All rights reserved.
-        </footer>
-    </div>
-</body>
-</html>
+                        <div
