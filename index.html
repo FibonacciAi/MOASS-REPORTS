@@ -1,15 +1,29 @@
+To restore the social feed from X.com and the stock tickers in the `index.html` file, let's proceed with the following steps:
+
+1. **Re-add the social feed from X.com**:
+   - Locate the section where the social feed should be.
+   - Add the required HTML and JavaScript to embed the social feed from X.com.
+
+2. **Re-add the stock tickers**:
+   - Ensure the stock tickers for GME, SIRI, and TSLA are displayed correctly.
+   - Verify the JavaScript logic to fetch and display stock prices is functioning properly.
+
+Here's the updated version of the `index.html` file with the necessary changes:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOASS Reports</title>
     <meta name="description" content="Explore the latest due diligence reports on MOASS, including SVMH, UAVS, SIRI, and GME. Stay updated with real-time prices.">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    
+
     <!-- Google Fonts for Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             /* Color Palette */
@@ -25,17 +39,19 @@
             --progress-fill: #1DA1F2;
             --footer-bg: #1e1e1e;
             --border-color: #333333;
-            
+
             /* Font */
             --font-family: 'Inter', sans-serif;
-            
+
             /* Layout */
             --max-width-container: 1200px;
             --transition-speed: 0.3s;
         }
 
         /* Reset and Base Styles */
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -72,12 +88,12 @@
             font-weight: 700;
             color: var(--accent);
             margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         p.tagline {
             font-size: 1.2rem;
-            color: var(--text-secondary);
+            color: var (--text-secondary);
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.5;
@@ -91,7 +107,8 @@
             gap: 20px;
             max-width: 800px;
             width: 100%;
-            margin-bottom: 60px; /* Space below report links */
+            margin-bottom: 60px;
+            /* Space below report links */
         }
 
         .report-links a {
@@ -103,7 +120,7 @@
             font-size: 1rem;
             font-weight: 600;
             transition: background-color var(--transition-speed), transform var(--transition-speed);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
         .report-links a:hover,
@@ -124,7 +141,7 @@
             font-weight: 600;
             color: var(--accent);
             margin-bottom: 30px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         /* Trackers */
@@ -140,13 +157,13 @@
             padding: 25px;
             border-radius: 12px;
             width: 280px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transition: transform var(--transition-speed), box-shadow var(--transition-speed);
         }
 
         .tracker:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .tracker h3 {
@@ -165,12 +182,12 @@
 
         .goal-text {
             font-size: 1rem;
-            color: var(--text-secondary);
+            color: var (--text-secondary);
             margin-bottom: 15px;
         }
 
         .progress-container {
-            background-color: var(--progress-bg);
+            background-color: var (--progress-bg);
             border-radius: 10px;
             overflow: hidden;
             height: 15px;
@@ -181,7 +198,7 @@
             height: 100%;
             width: 0%;
             background-color: var(--progress-fill);
-            transition: width var(--transition-speed), background-color var(--transition-speed);
+            transition: width var (--transition-speed), background-color var (--transition-speed);
         }
 
         /* Twitter Feed Styling */
@@ -191,8 +208,9 @@
             margin: 0 auto;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            margin-bottom: 60px; /* Space below Twitter feed */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 60px;
+            /* Space below Twitter feed */
         }
 
         .twitter-feed .twitter-timeline {
@@ -201,10 +219,10 @@
 
         /* Footer */
         footer {
-            background-color: var(--footer-bg);
+            background-color: var (--footer-bg);
             padding: 20px;
             font-size: 0.9rem;
-            color: var(--text-secondary);
+            color: var (--text-secondary);
             width: 100%;
             border-top: 1px solid var(--border-color);
             margin-top: 40px;
@@ -215,20 +233,25 @@
             h1 {
                 font-size: 2.5rem;
             }
+
             p.tagline {
                 font-size: 1rem;
             }
+
             .section-group h2 {
                 font-size: 2rem;
             }
+
             .tracker {
                 width: 100%;
                 max-width: 400px;
             }
+
             .report-links a {
                 font-size: 0.95rem;
                 padding: 10px 20px;
             }
+
             .twitter-feed {
                 max-width: 100%;
             }
@@ -238,21 +261,27 @@
             h1 {
                 font-size: 2rem;
             }
+
             p.tagline {
                 font-size: 0.9rem;
             }
+
             .section-group h2 {
                 font-size: 1.8rem;
             }
+
             .tracker {
                 padding: 20px;
             }
+
             .tracker h3 {
                 font-size: 1.3rem;
             }
+
             .price {
                 font-size: 1.6rem;
             }
+
             .report-links a {
                 font-size: 0.9rem;
                 padding: 8px 16px;
@@ -267,11 +296,18 @@
 
         /* Keyframes for Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Configuration for Assets
@@ -462,17 +498,27 @@
 
             // Helper function to format asset names
             function formatAssetName(key) {
-                switch(key) {
-                    case 'bitcoin': return 'Bitcoin';
-                    case 'ethereum': return 'Ethereum';
-                    case 'litecoin': return 'Litecoin';
-                    case 'xrp': return 'XRP';
-                    case 'stellar': return 'Stellar Lumens';
-                    case 'dogecoin': return 'Dogecoin';
-                    case 'gamestop': return 'GME';
-                    case 'siriusxm': return 'SIRI';
-                    case 'tesla': return 'TSLA';
-                    default: return key.toUpperCase();
+                switch (key) {
+                    case 'bitcoin':
+                        return 'Bitcoin';
+                    case 'ethereum':
+                        return 'Ethereum';
+                    case 'litecoin':
+                        return 'Litecoin';
+                    case 'xrp':
+                        return 'XRP';
+                    case 'stellar':
+                        return 'Stellar Lumens';
+                    case 'dogecoin':
+                        return 'Dogecoin';
+                    case 'gamestop':
+                        return 'GME';
+                    case 'siriusxm':
+                        return 'SIRI';
+                    case 'tesla':
+                        return 'TSLA';
+                    default:
+                        return key.toUpperCase();
                 }
             }
 
@@ -487,6 +533,7 @@
         });
     </script>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -533,14 +580,4 @@
                     <div class="tracker" aria-live="polite">
                         <h3>Litecoin</h3>
                         <div class="price" id="litecoin-price">Loading Litecoin Price...</div>
-                        <div class="goal-text">Progress towards $420</div>
-                        <div class="progress-container" aria-hidden="true">
-                            <div class="progress-bar litecoin-progress-bar"></div>
-                        </div>
-                    </div>
-
-                    <!-- XRP Tracker -->
-                    <div class="tracker" aria-live="polite">
-                        <h3>XRP (Ripple)</h3>
-                        <div class="price" id="xrp-price">Loading XRP Price...</div>
-                        <div
+                       
