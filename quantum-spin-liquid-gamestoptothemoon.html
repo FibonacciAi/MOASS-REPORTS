@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Spin Liquid Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            background: #050A30;
+            overflow: hidden;
+            font-family: 'Space Grotesk', Arial, sans-serif;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(5, 10, 48, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: #00AEEF;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-btn:hover {
+            background: #B400FF;
+            transform: translateY(-2px);
+        }
+
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(5, 10, 48, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            font-size: 14px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+<div class="controls">
+    <button class="control-btn" id="toggleRotation">Toggle Rotation</button>
+    <button class="control-btn" id="toggleWaves">Toggle Waves</button>
+    <button class="control-btn" id="toggleParticles">Toggle Particles</button>
+</div>
+<div class="info-panel">
+    <div id="fps">FPS: 0</div>
+    <div id="particleCount">Particles: 3000</div>
+</div>
+<canvas id="canvas3d"></canvas>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.159.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.159.0/examples/jsm/"
+    }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// Enhanced quantum palette
+const quantumPalette = {
+    darkBlue: 0x050A30,
+    electricBlue: 0x00AEEF,
+    neonPurple: 0xB400FF,
+    neonYellow: 0xFFFF33,
+    wavePink: 0xFF1E8F,
+    white: 0xFFFFFF
+};
+
+// Renderer setup with enhanced quality
+const canvas = document.getElementById('canvas3d');
+const renderer = new THREE.WebGLRenderer({ 
+    canvas, 
+    antialias: true,
+    powerPreference: "high-performance"
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+// Scene with fog
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(quantumPalette.darkBlue);
+scene.fog = new THREE.FogExp2(quantumPalette.darkBlue, 0.02);
+
+// Enhanced camera
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 2, 6);
+scene.add(camera);
+
+// Controls with enhanced interactivity
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.2;
+controls.maxDistance = 20;
+controls.minDistance = 3;
+
+// Enhanced lighting system
+const ambientLight = new THREE.AmbientLight(quantumPalette.electricBlue, 0.4);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(quantumPalette.neonYellow, 1.5, 50);
+pointLight.position.set(5, 5, 5);
+scene.add(pointLight);
+
+// Moving light
+const movingLight = new THREE.PointLight(quantumPalette.wavePink, 1.0, 30);
+scene.add(movingLight);
+
+// Particle System with enhanced effects
+const particleCount = 3000;
+const particleGeometry = new THREE.BufferGeometry();
+const particlePositions = new Float32Array(particleCount * 3);
+const particleVelocities = new Float32Array(particleCount * 3);
+const particleSizes = new Float32Array(particleCount);
+
+for (let i = 0; i < particleCount; i++) {
+    particlePositions[i * 3] = (Math.random() - 0.5) * 10;
+    particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+    particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+
+    particleVelocities[i * 3] = (Math.random() - 0.5) * 0.02;
+    particleVelocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
+    particleVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
+
+    particleSizes[i] = Math.random() * 0.1 + 0.05;
+}
+
+particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+particleGeometry.setAttribute('velocity', new THREE.BufferAttribute(particleVelocities, 3));
+particleGeometry.setAttribute('size', new THREE.BufferAttribute(particleSizes, 1));
+
+const particleMaterial = new THREE.PointsMaterial({
+    color: quantumPalette.wavePink,
+    size: 0.1,
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending,
+    vertexColors: true
+});
+
+const particles = new THREE.Points(particleGeometry, particleMaterial);
+scene.add(particles);
+
+// Multiple Quantum Wave Patterns
+const waves = [];
+const waveCount = 3;
+for (let i = 0; i < waveCount; i++) {
+    const waveGeometry = new THREE.RingGeometry(1 + i * 0.5, 1.2 + i * 0.5, 32, 1);
+    const waveMaterial = new THREE.MeshBasicMaterial({
+        color: new THREE.Color().setHSL(i / waveCount, 0.8, 0.5),
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.4
+    });
+    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
+    wave.rotation.x = Math.PI / 2;
+    waves.push(wave);
+    scene.add(wave);
+}
+
+// FPS counter
+let lastTime = performance.now();
+let frameCount = 0;
+const fpsElement = document.getElementById('fps');
+
+// Controls
+let showWaves = true;
+let showParticles = true;
+document.getElementById('toggleRotation').addEventListener('click', () => {
+    controls.autoRotate = !controls.autoRotate;
+});
+document.getElementById('toggleWaves').addEventListener('click', () => {
+    showWaves = !showWaves;
+    waves.forEach(wave => wave.visible = showWaves);
+});
+document.getElementById('toggleParticles').addEventListener('click', () => {
+    showParticles = !showParticles;
+    particles.visible = showParticles;
+});
+
+// Enhanced Animation Loop
+function animate() {
+    const time = performance.now();
+    frameCount++;
+    
+    if (time - lastTime > 1000) {
+        const fps = Math.round((frameCount * 1000) / (time - lastTime));
+        fpsElement.textContent = `FPS: ${fps}`;
+        frameCount = 0;
+        lastTime = time;
+    }
+
+    const positions = particles.geometry.attributes.position.array;
+    const velocities = particles.geometry.attributes.velocity.array;
+
+    // Update particles with enhanced movement
+    for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] += velocities[i * 3];
+        positions[i * 3 + 1] += velocities[i * 3 + 1];
+        positions[i * 3 + 2] += velocities[i * 3 + 2];
+
+        // Enhanced bounce effect with damping
+        if (Math.abs(positions[i * 3]) > 5) {
+            velocities[i * 3] *= -0.95;
+            positions[i * 3] = Math.sign(positions[i * 3]) * 5;
+        }
+        if (Math.abs(positions[i * 3 + 1]) > 5) {
+            velocities[i * 3 + 1] *= -0.95;
+            positions[i * 3 + 1] = Math.sign(positions[i * 3 + 1]) * 5;
+        }
+        if (Math.abs(positions[i * 3 + 2]) > 5) {
+            velocities[i * 3 + 2] *= -0.95;
+            positions[i * 3 + 2] = Math.sign(positions[i * 3 + 2]) * 5;
+        }
+    }
+    particles.geometry.attributes.position.needsUpdate = true;
+
+    // Update waves with different phases
+    waves.forEach((wave, index) => {
+        const scale = 1 + Math.sin(time * 0.001 + index * Math.PI / waveCount) * 0.1;
+        wave.scale.set(scale, scale, 1);
+        wave.rotation.z += 0.001 * (index + 1);
+    });
+
+    // Moving light animation
+    const lightRadius = 8;
+    movingLight.position.x = Math.cos(time * 0.001) * lightRadius;
+    movingLight.position.z = Math.sin(time * 0.001) * lightRadius;
+    movingLight.position.y = Math.sin(time * 0.002) * 3;
+
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+// Enhanced window resize handler
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>
